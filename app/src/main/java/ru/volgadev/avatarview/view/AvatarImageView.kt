@@ -1,6 +1,7 @@
 package ru.volgadev.avatarview.view
 
 import AvatarPlaceholderDrawable
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.*
@@ -9,10 +10,12 @@ import android.util.AttributeSet
 import ru.volgadev.avatarview.R
 import kotlin.math.min
 
+private const val BORDER_ANIMATION_DURATION_MS = 1300L
+private const val BORDER_ANIMATION_AMPLITUDE_PX = 2
+
 class AvatarImageView(context: Context, attrs: AttributeSet) :
     androidx.appcompat.widget.AppCompatImageView(context, attrs) {
 
-    private var borderColor = Color.WHITE
     private var borderWidth = 0
     private var textSizePercentage = 33
     private var viewSize = 0
@@ -21,7 +24,6 @@ class AvatarImageView(context: Context, attrs: AttributeSet) :
     var circleCenterY = 0
 
     private var name: String = AvatarPlaceholderDrawable.DEFAULT_PLACEHOLDER_STRING
-
     private val avatarPlaceholderDrawable: AvatarPlaceholderDrawable by lazy {
         AvatarPlaceholderDrawable(name = name, textSizePercentage = textSizePercentage)
     }
@@ -29,13 +31,16 @@ class AvatarImageView(context: Context, attrs: AttributeSet) :
     private val borderPaint = Paint().apply {
         isAntiAlias = true
         style = Paint.Style.FILL
+        color = Color.WHITE
     }
     private val mainPaint = Paint().apply {
         isAntiAlias = true
         xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
     }
 
-    private var circleRect: Rect? = null
+    private var circleRect = Rect(0, 0, 0, 0)
+
+    private var isPlaceholderInFront = true
 
     init {
         val typedArray = context.theme.obtainStyledAttributes(
@@ -51,7 +56,9 @@ class AvatarImageView(context: Context, attrs: AttributeSet) :
     }
 
     private fun parseBorderValues(typedArray: TypedArray) {
-        borderColor = typedArray.getColor(R.styleable.AvatarImageView_border_color, borderColor)
+        val borderColor =
+            typedArray.getColor(R.styleable.AvatarImageView_border_color, borderPaint.color)
+        borderPaint.color = borderColor
         borderWidth = typedArray.getDimensionPixelSize(
             R.styleable.AvatarImageView_border_width,
             borderWidth
@@ -66,7 +73,7 @@ class AvatarImageView(context: Context, attrs: AttributeSet) :
     }
 
     fun setBorderColor(color: Int) {
-        borderColor = color
+        borderPaint.color = color
     }
 
     fun setBorderWidth(widthPx: Int) {
@@ -76,7 +83,17 @@ class AvatarImageView(context: Context, attrs: AttributeSet) :
     public override fun onDraw(canvas: Canvas) {
         calculateSizes(canvas)
 
-        val drawable = drawable ?: avatarPlaceholderDrawable
+        var fromPlaceholderToDrawable = false
+
+        val drawable = if (drawable != null) {
+            if (isPlaceholderInFront) {
+                fromPlaceholderToDrawable = true
+                isPlaceholderInFront = false
+            }
+            drawable
+        } else {
+            avatarPlaceholderDrawable
+        }
         val circleBitmap = cutIntoCircle(drawableToBitmap(drawable))
         canvas.translate(circleCenterX.toFloat(), circleCenterY.toFloat())
 
@@ -88,6 +105,24 @@ class AvatarImageView(context: Context, attrs: AttributeSet) :
             borderPaint
         )
         canvas.drawBitmap(circleBitmap, 0f, 0f, null)
+
+        if (fromPlaceholderToDrawable) {
+            animateSettingDrawable()
+        }
+    }
+
+    private fun animateSettingDrawable() {
+        val view = this
+        ValueAnimator.ofInt(borderWidth, (borderWidth + BORDER_ANIMATION_AMPLITUDE_PX), borderWidth)
+            .apply {
+                duration = BORDER_ANIMATION_DURATION_MS
+                addUpdateListener { animation ->
+                    val value = animation.animatedValue as Int
+                    view.borderWidth = value
+                    view.invalidate()
+                }
+                start()
+            }
     }
 
     private fun drawableToBitmap(drawable: Drawable): Bitmap {
@@ -108,7 +143,7 @@ class AvatarImageView(context: Context, attrs: AttributeSet) :
             circleRadius.toFloat(),
             borderPaint
         )
-        canvas.drawBitmap(bitmap, circleRect, circleRect!!, mainPaint)
+        canvas.drawBitmap(bitmap, circleRect, circleRect, mainPaint)
         return output
     }
 

@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         avatarView1.setUserName("Sergey")
         avatarView1.postDelayed({
             avatarView1.setImageDrawable(getDrawable(R.drawable.korolev))
-        }, 2000L)
+        }, 3000L)
 
         val avatarView3: AvatarImageView = findViewById(R.id.avatarView3)
         with(avatarView3) {

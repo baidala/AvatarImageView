@@ -8,27 +8,20 @@ internal class AvatarPlaceholderDrawable @JvmOverloads constructor(
     private val defaultString: String = DEFAULT_PLACEHOLDER_STRING
 ) : Drawable() {
 
-    private val textPaint: Paint
-    private val backgroundPaint: Paint
+    private val textPaint = Paint().apply {
+        isAntiAlias = true
+        color = Color.parseColor("white")
+        typeface = Typeface.create("sans-serif-light", Typeface.NORMAL)
+    }
+    private val backgroundPaint = Paint().apply {
+        isAntiAlias = true
+        style = Paint.Style.FILL
+        color = Color.parseColor(convertStringToColor(name))
+    }
     private var placeholderBounds: RectF? = null
-    private val avatarText: String
+    private val avatarText: String = convertNameToAvatarText(name)
     private var textStartXPoint = 0f
     private var textStartYPoint = 0f
-
-    init {
-        avatarText = convertNameToAvatarText(name)
-
-        textPaint = Paint().apply {
-            isAntiAlias = true
-            color = Color.parseColor("white")
-            typeface = Typeface.create("sans-serif-light", Typeface.NORMAL)
-        }
-        backgroundPaint = Paint().apply {
-            isAntiAlias = true
-            style = Paint.Style.FILL
-            color = Color.parseColor(convertStringToColor(name))
-        }
-    }
 
     override fun draw(canvas: Canvas) {
         if (placeholderBounds == null) {

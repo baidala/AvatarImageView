@@ -18,7 +18,7 @@
         android:layout_margin="8dp"
         android:src="@drawable/korolev"
         app:border_color="@android:color/holo_green_dark"
-        app:border_width="4dp" />
+        app:border_width="2dp" />
 
     <ru.volgadev.avatarview.view.AvatarImageView
         android:id="@+id/avatarView3"
