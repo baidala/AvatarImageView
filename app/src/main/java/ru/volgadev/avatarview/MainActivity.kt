@@ -3,7 +3,7 @@ package ru.volgadev.avatarview
 import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import ru.volgadev.avatarview.view.AvatarImageView
+import ru.volgadev.avatarimageview.AvatarImageView
 
 class MainActivity : AppCompatActivity() {
 

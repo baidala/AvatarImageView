@@ -1,13 +1,13 @@
-package ru.volgadev.avatarview.view
+package ru.volgadev.avatarimageview
 
-import AvatarPlaceholderDrawable
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.util.AttributeSet
-import ru.volgadev.avatarview.R
+import androidx.annotation.RequiresApi
 import kotlin.math.min
 
 private const val BORDER_ANIMATION_DURATION_MS = 1300L
@@ -107,10 +107,13 @@ class AvatarImageView(context: Context, attrs: AttributeSet) :
         canvas.drawBitmap(circleBitmap, 0f, 0f, null)
 
         if (fromPlaceholderToDrawable) {
-            animateSettingDrawable()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                animateSettingDrawable()
+            }
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.HONEYCOMB)
     private fun animateSettingDrawable() {
         val view = this
         ValueAnimator.ofInt(borderWidth, (borderWidth + BORDER_ANIMATION_AMPLITUDE_PX), borderWidth)

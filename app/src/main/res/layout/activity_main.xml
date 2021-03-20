@@ -5,13 +5,13 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <ru.volgadev.avatarview.view.AvatarImageView
+    <ru.volgadev.avatarimageview.AvatarImageView
         android:id="@+id/avatarView1"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_margin="8dp" />
 
-    <ru.volgadev.avatarview.view.AvatarImageView
+    <ru.volgadev.avatarimageview.AvatarImageView
         android:id="@+id/avatarView2"
         android:layout_width="96dp"
         android:layout_height="96dp"
@@ -20,7 +20,7 @@
         app:border_color="@android:color/holo_green_dark"
         app:border_width="2dp" />
 
-    <ru.volgadev.avatarview.view.AvatarImageView
+    <ru.volgadev.avatarimageview.AvatarImageView
         android:id="@+id/avatarView3"
         android:layout_width="128dp"
         android:layout_height="128dp"

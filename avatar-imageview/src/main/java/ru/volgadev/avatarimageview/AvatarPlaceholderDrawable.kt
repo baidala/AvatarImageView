@@ -1,3 +1,5 @@
+package ru.volgadev.avatarimageview
+
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import java.util.*
